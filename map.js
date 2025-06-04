@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1d
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/standard-light-v1', // ✅ Dusk preset
+  style: 'mapbox://styles/melissagall2023/cmbi8z8tp003n01s98kz2e9iatandard-light-v1', // ✅ Dusk preset
   center: [-94.58295, 39.09187],
   zoom: 16.5,
   pitch: 70,
