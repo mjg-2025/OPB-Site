@@ -2,11 +2,11 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1d
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/standard',
+  style: 'mapbox://styles/mapbox/standard-light-v1', // ✅ Dusk preset
   center: [-94.58295, 39.09187],
-  zoom: 15.8,
-  pitch: 62,
-  bearing: -20,
+  zoom: 16.5,
+  pitch: 70,
+  bearing: -30,
   antialias: true
 });
 
