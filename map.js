@@ -11,6 +11,27 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', () => {
+  // 🔹 Add 3D Terrain (required for shadow/depth)
+  map.addSource('mapbox-dem', {
+    type: 'raster-dem',
+    url: 'mapbox://mapbox.terrain-rgb',
+    tileSize: 512,
+    maxzoom: 14
+  });
+  map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+
+  // 🔸 Add Sky Layer for dusk effect
+  map.addLayer({
+    id: 'sky',
+    type: 'sky',
+    paint: {
+      'sky-type': 'atmosphere',
+      'sky-atmosphere-sun': [0.0, 0.0],
+      'sky-atmosphere-sun-intensity': 15
+    }
+  });
+
+  // 🏢 Your 30 Navy Property Buildings with scaled height
   const buildings = [
     { coords: [-94.58061, 39.09158], space: 6350 },
     { coords: [-94.58295, 39.09187], space: 10900 },
@@ -68,7 +89,7 @@ map.on('load', () => {
     source: 'navy-buildings',
     paint: {
       'fill-extrusion-color': '#003865',
-      'fill-extrusion-height': ['/', ['get', 'space'], 100], // 💡 Scaled from space
+      'fill-extrusion-height': ['/', ['get', 'space'], 100],
       'fill-extrusion-base': 0,
       'fill-extrusion-opacity': 1
     }
