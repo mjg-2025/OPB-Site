@@ -15,7 +15,7 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
   console.log("✅ Map loaded. Properties:", properties?.length);
 
-  // 1️⃣ SKY (optional visual layer)
+  // 1️⃣ SKY (optional)
   map.addLayer({
     id: 'sky',
     type: 'sky',
@@ -26,7 +26,7 @@ map.on('load', () => {
     }
   });
 
-  // 2️⃣ BASE 3D BUILDINGS (from style)
+  // 2️⃣ BASE 3D BUILDINGS
   map.addLayer({
     id: 'default-3d-buildings',
     source: 'building',
@@ -77,7 +77,7 @@ map.on('load', () => {
     }
   });
 
-  // 4️⃣ MARKERS WITH POPUPS
+  // 4️⃣ CUSTOM DOM MARKERS WITH HOVER
   properties.forEach(prop => {
     const popupHTML = `
       <div class="property-popup">
@@ -88,13 +88,17 @@ map.on('load', () => {
       </div>
     `;
 
-    new mapboxgl.Marker({ color: '#C4452C' })
+    const el = document.createElement('div');
+    el.className = 'custom-marker';
+    el.setAttribute('data-address', prop.address);
+
+    new mapboxgl.Marker(el)
       .setLngLat([prop.lon, prop.lat])
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
       .addTo(map);
   });
 
-  // 5️⃣ ALWAYS-VISIBLE ADDRESS LABELS
+  // 5️⃣ ADDRESS LABELS — DE-CLUTTERED
   const geojson = {
     type: "FeatureCollection",
     features: properties.map(p => ({
@@ -115,17 +119,19 @@ map.on('load', () => {
     source: "property-labels",
     layout: {
       "text-field": ["get", "address"],
-      "text-size": 14,
+      "text-size": 13,
       "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
-      "text-offset": [0, 1.5],
-      "text-anchor": "top",
-      "text-allow-overlap": true
+      "text-offset": [0, 1.6],
+      "text-variable-anchor": ["top", "bottom", "left", "right"],
+      "text-radial-offset": 0.5,
+      "text-justify": "auto",
+      "text-allow-overlap": false
     },
     paint: {
       "text-color": "#111111",
       "text-halo-color": "#ffffff",
       "text-halo-width": 2.2,
-      "text-halo-blur": 0.2
+      "text-halo-blur": 0.3
     }
   });
 });
