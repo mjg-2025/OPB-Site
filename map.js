@@ -61,7 +61,7 @@ map.on('load', () => {
       </div>
     `;
 
-    new mapboxgl.Marker({ color: '#0072CE' })
+    new mapboxgl.Marker({ color: '#C4452C' })
       .setLngLat([prop.lon, prop.lat])
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
       .addTo(map);
@@ -83,20 +83,21 @@ map.on('load', () => {
   });
 
   map.addLayer({
-    id: "property-labels-layer",
-    type: "symbol",
-    source: "property-labels",
-    layout: {
-      "text-field": ["get", "address"],
-      "text-size": 12,
-      "text-offset": [0, 1.5],
-      "text-anchor": "top",
-      "text-allow-overlap": true
-    },
-    paint: {
-      "text-color": "#111111",
-      "text-halo-color": "#ffffff",
-      "text-halo-width": 1
-    }
-  });
+  id: "property-labels-layer",
+  type: "symbol",
+  source: "property-labels",
+  layout: {
+    "text-field": ["get", "address"],
+    "text-size": 12,
+    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+    "text-offset": [0, 1.5],
+    "text-anchor": "top",
+    "text-allow-overlap": true
+  },
+  paint: {
+    "text-color": "#333333", // 🧠 Dark neutral for visibility
+    "text-halo-color": "#ffffff",
+    "text-halo-width": 1.2
+  }
+});
 });
