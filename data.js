@@ -36,7 +36,8 @@ const properties = [
     lat: 39.10178,
     lon: -94.58257,
     link: "https://ahprd1cdn.csgpimgs.com/d2/Ex0q5NdWp38iCiPbwfd4WQHsn0JgAtWBL5zofYvwDFQ/document.pdf",
-    space: 3158, 5012,
+    space: 3158,
+    space: 5012,
     submarket: "CBD"
   },
   {
