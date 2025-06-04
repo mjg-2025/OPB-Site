@@ -113,7 +113,7 @@ const properties = [
     submarket: "River Market"
   },
   {
-    address: "215 E 18TH St",
+    address: "215 E 18th St",
     lat: 39.0902,
     lon: -94.5763,
     link: "https://ahprd1cdn.csgpimgs.com/d2/uIttazioadeJff5NDLYUrIimNP5Y-Qpu5rqXG9oYJjw/document.pdf",

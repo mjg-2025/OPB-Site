@@ -4,20 +4,18 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1d
 // 🗺️ Initialize Mapbox Map with Custom Studio Style
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm', // ✅ Your custom style
+  style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm',
   center: [-94.58295, 39.09187],
   zoom: 16.5,
-  pitch: 70,
-  bearing: -30,
+  pitch: 45,
+  bearing: -20,
   antialias: true
 });
 
 map.on('load', () => {
   console.log("✅ Map loaded. Properties:", properties?.length);
 
-
-
-  // 2️⃣ SKY LAYER
+  // 1️⃣ SKY (optional visual layer)
   map.addLayer({
     id: 'sky',
     type: 'sky',
@@ -28,7 +26,7 @@ map.on('load', () => {
     }
   });
 
-  // 3️⃣ 3D BUILDINGS from Studio Style Source
+  // 2️⃣ BASE 3D BUILDINGS (from style)
   map.addLayer({
     id: 'default-3d-buildings',
     source: 'building',
@@ -43,7 +41,43 @@ map.on('load', () => {
     }
   });
 
-  // 4️⃣ INTERACTIVE MARKERS with POPUPS
+  // 3️⃣ CUSTOM 3D PROPERTY BUILDINGS
+  map.addSource('property-buildings', {
+    type: 'geojson',
+    data: {
+      type: "FeatureCollection",
+      features: properties.map(p => ({
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [[
+            [p.lon - 0.0001, p.lat - 0.0001],
+            [p.lon + 0.0001, p.lat - 0.0001],
+            [p.lon + 0.0001, p.lat + 0.0001],
+            [p.lon - 0.0001, p.lat + 0.0001],
+            [p.lon - 0.0001, p.lat - 0.0001]
+          ]]
+        },
+        properties: {
+          height: p.space / 100
+        }
+      }))
+    }
+  });
+
+  map.addLayer({
+    id: 'property-3d-buildings',
+    type: 'fill-extrusion',
+    source: 'property-buildings',
+    paint: {
+      'fill-extrusion-color': '#C4452C',
+      'fill-extrusion-height': ['get', 'height'],
+      'fill-extrusion-base': 0,
+      'fill-extrusion-opacity': 0.9
+    }
+  });
+
+  // 4️⃣ MARKERS WITH POPUPS
   properties.forEach(prop => {
     const popupHTML = `
       <div class="property-popup">
@@ -60,7 +94,7 @@ map.on('load', () => {
       .addTo(map);
   });
 
-  // 5️⃣ ALWAYS-VISIBLE LABELS
+  // 5️⃣ ALWAYS-VISIBLE ADDRESS LABELS
   const geojson = {
     type: "FeatureCollection",
     features: properties.map(p => ({
@@ -76,23 +110,22 @@ map.on('load', () => {
   });
 
   map.addLayer({
-  id: "property-labels-layer",
-  type: "symbol",
-  source: "property-labels",
-  layout: {
-    "text-field": ["get", "address"],
-    "text-size": 14, // ⬆️ increased from 12 → 14
-    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
-    "text-offset": [0, 1.5],
-    "text-anchor": "top",
-    "text-allow-overlap": true
-  },
-  paint: {
-    "text-color": "#111111",             // darker gray for contrast
-    "text-halo-color": "#ffffff",        // white outline
-    "text-halo-width": 2.2,              // ⬆️ from 1 → 2.2 for bolder halo
-    "text-halo-blur": 0.2                // subtle blur for smooth edges
-  }
+    id: "property-labels-layer",
+    type: "symbol",
+    source: "property-labels",
+    layout: {
+      "text-field": ["get", "address"],
+      "text-size": 14,
+      "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+      "text-offset": [0, 1.5],
+      "text-anchor": "top",
+      "text-allow-overlap": true
+    },
+    paint: {
+      "text-color": "#111111",
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 2.2,
+      "text-halo-blur": 0.2
+    }
+  });
 });
-});
-
