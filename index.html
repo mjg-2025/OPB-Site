@@ -5,19 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Range Realty 3D Map</title>
   <meta name="description" content="Interactive 3D property map for Range Realty Partners." />
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
-<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
+  <!-- ✅ Mapbox CSS -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+  <!-- ✅ Your Styles -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="map"></div>
+  <!-- ✅ Only ONE #map container -->
+  <div id="map" style="width: 100%; height: 100vh;"></div>
 
+  <!-- ✅ Mapbox JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+  <!-- ✅ Your Scripts -->
   <script src="data.js" defer></script>
   <script src="script.js" defer></script>
-  <script src="js/map.js"></script>
-  <div id="map" style="width: 100%; height: 100vh;"></div>
+  <script src="js/map.js" defer></script> <!-- ✅ Only if js/map.js really exists -->
 </body>
 </html>
