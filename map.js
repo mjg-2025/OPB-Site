@@ -1,10 +1,10 @@
-// 🧠 Set your public Mapbox access token
+// 🧠 Mapbox Access Token
 mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1dmEya2w4MHMybGtpNjkifQ.aoXUpnQ0onOhWlwuCWmdEA';
 
-// 🗺️ Initialize the Mapbox map with updated custom style
+// 🗺️ Initialize Mapbox Map with Custom Studio Style
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm', // ✅ NEW STYLE
+  style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm', // ✅ Your custom style
   center: [-94.58295, 39.09187],
   zoom: 16.5,
   pitch: 70,
@@ -13,20 +13,18 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', () => {
-  // 🌄 Add 3D terrain elevation
+  console.log("✅ Map loaded. Properties:", properties?.length);
+
+  // 1️⃣ 3D TERRAIN
   map.addSource('mapbox-dem', {
     type: 'raster-dem',
     url: 'mapbox://mapbox.terrain-rgb',
     tileSize: 512,
     maxzoom: 14
   });
+  map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
 
-  map.setTerrain({
-    source: 'mapbox-dem',
-    exaggeration: 1.5
-  });
-
-  // ☁️ Add atmospheric sky layer
+  // 2️⃣ SKY LAYER
   map.addLayer({
     id: 'sky',
     type: 'sky',
@@ -37,10 +35,10 @@ map.on('load', () => {
     }
   });
 
-  // 🏙️ Add default 3D buildings from Mapbox Streets v8
+  // 3️⃣ 3D BUILDINGS from Studio Style Source
   map.addLayer({
     id: 'default-3d-buildings',
-    source: 'building', // ⚠️ Must match your Studio source name
+    source: 'building',
     'source-layer': 'building',
     type: 'fill-extrusion',
     minzoom: 15,
@@ -49,6 +47,56 @@ map.on('load', () => {
       'fill-extrusion-height': ['get', 'height'],
       'fill-extrusion-base': ['get', 'min_height'],
       'fill-extrusion-opacity': 0.5
+    }
+  });
+
+  // 4️⃣ INTERACTIVE MARKERS with POPUPS
+  properties.forEach(prop => {
+    const popupHTML = `
+      <div class="property-popup">
+        <h3>${prop.address}</h3>
+        <p><strong>Submarket:</strong> ${prop.submarket}</p>
+        <p><strong>Size:</strong> ${prop.space.toLocaleString()} SF</p>
+        ${prop.link ? `<a href="${prop.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
+      </div>
+    `;
+
+    new mapboxgl.Marker({ color: '#0072CE' })
+      .setLngLat([prop.lon, prop.lat])
+      .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
+      .addTo(map);
+  });
+
+  // 5️⃣ ALWAYS-VISIBLE LABELS
+  const geojson = {
+    type: "FeatureCollection",
+    features: properties.map(p => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+      properties: { ...p }
+    }))
+  };
+
+  map.addSource("property-labels", {
+    type: "geojson",
+    data: geojson
+  });
+
+  map.addLayer({
+    id: "property-labels-layer",
+    type: "symbol",
+    source: "property-labels",
+    layout: {
+      "text-field": ["get", "address"],
+      "text-size": 12,
+      "text-offset": [0, 1.5],
+      "text-anchor": "top",
+      "text-allow-overlap": true
+    },
+    paint: {
+      "text-color": "#111111",
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 1
     }
   });
 });
