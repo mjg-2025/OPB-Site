@@ -231,4 +231,80 @@ const properties = [
     space: 2630,
     submarket: "CBD"
   }
+
 ];
+const geojson = {
+  type: "FeatureCollection",
+  features: properties.map(p => ({
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: [p.lon, p.lat]
+    },
+    properties: {
+      ...p
+    }
+  }))
+};
+
+// ✅ STEP 3: Add this INSIDE your map.on("load", ...) function
+map.on("load", () => {
+  // Source
+  map.addSource("properties-data", {
+    type: "geojson",
+    data: geojson
+  });
+
+  // Circle markers
+  map.addLayer({
+    id: "property-points",
+    type: "circle",
+    source: "properties-data",
+    paint: {
+      "circle-radius": 6,
+      "circle-color": "#ff6600",
+      "circle-stroke-width": 1,
+      "circle-stroke-color": "#000000"
+    }
+  });
+
+  // Always-visible address labels
+  map.addLayer({
+    id: "property-labels",
+    type: "symbol",
+    source: "properties-data",
+    layout: {
+      "text-field": ["get", "address"],
+      "text-size": 12,
+      "text-offset": [0, 1.5],
+      "text-anchor": "top",
+      "text-allow-overlap": true
+    },
+    paint: {
+      "text-color": "#111",
+      "text-halo-color": "#fff",
+      "text-halo-width": 1
+    }
+  });
+
+  // Click-to-open PDF
+  map.on("click", "property-points", (e) => {
+    const url = e.features[0].properties.link;
+    if (url) window.open(url, "_blank");
+  });
+
+  // Hover cursor
+  map.on("mouseenter", "property-points", () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
+  map.on("mouseleave", "property-points", () => {
+    map.getCanvas().style.cursor = "";
+  });
+});
+const map = new mapboxgl.Map({
+  container: "map",
+  style: "mapbox://styles/...",
+  center: [-94.58, 39.09],
+  zoom: 12
+});
+
