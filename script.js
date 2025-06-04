@@ -13,6 +13,7 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
   console.log("✅ Map loaded. Properties length:", properties?.length);
 
+  // 1️⃣ 3D BUILDINGS LAYER
   map.addSource('composite', {
     type: 'vector',
     url: 'mapbox://mapbox.mapbox-streets-v8'
@@ -36,6 +37,8 @@ map.on('load', () => {
       'fill-extrusion-opacity': 0.9
     }
   });
+
+  // 2️⃣ MARKERS + POPUPS
   properties.forEach(prop => {
     const popupHTML = `
       <div class="property-popup">
@@ -50,5 +53,41 @@ map.on('load', () => {
       .setLngLat([prop.lon, prop.lat])
       .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML))
       .addTo(map);
+  });
+
+  // 3️⃣ ALWAYS-VISIBLE LABELS LAYER
+  const geojson = {
+    type: "FeatureCollection",
+    features: properties.map(p => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [p.lon, p.lat]
+      },
+      properties: { ...p }
+    }))
+  };
+
+  map.addSource("property-labels", {
+    type: "geojson",
+    data: geojson
+  });
+
+  map.addLayer({
+    id: "property-labels-layer",
+    type: "symbol",
+    source: "property-labels",
+    layout: {
+      "text-field": ["get", "address"],
+      "text-size": 12,
+      "text-offset": [0, 1.5],
+      "text-anchor": "top",
+      "text-allow-overlap": true
+    },
+    paint: {
+      "text-color": "#111111",
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 1
+    }
   });
 });
