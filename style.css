@@ -1,0 +1,22 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+#map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+.property-popup h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #0072CE;
+}
+.property-popup a {
+  color: #0072CE;
+  text-decoration: none;
+  font-weight: bold;
+}
