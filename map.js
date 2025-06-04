@@ -15,14 +15,7 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
   console.log("✅ Map loaded. Properties:", properties?.length);
 
-  // 1️⃣ 3D TERRAIN
-  map.addSource('mapbox-dem', {
-    type: 'raster-dem',
-    url: 'mapbox://mapbox.terrain-rgb',
-    tileSize: 512,
-    maxzoom: 14
-  });
-  map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 });
+
 
   // 2️⃣ SKY LAYER
   map.addLayer({
