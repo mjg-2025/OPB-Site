@@ -28,7 +28,7 @@ const properties = [
     lat: 39.09083,
     lon: -94.59922,
     link: "https://ahprd1cdn.csgpimgs.com/d2/Dyv2NdhvzHe_CXZCWGjO_KtVC1BIdPg7D3Ba5qJlJt4/document.pdf",
-    space: 33929,
+    space: 3405,
     submarket: "Freight House District"
   },
   {
@@ -36,7 +36,7 @@ const properties = [
     lat: 39.10178,
     lon: -94.58257,
     link: "https://ahprd1cdn.csgpimgs.com/d2/Ex0q5NdWp38iCiPbwfd4WQHsn0JgAtWBL5zofYvwDFQ/document.pdf",
-    space: 23665,
+    space: 3158, 5012,
     submarket: "CBD"
   },
   {
@@ -115,7 +115,7 @@ const properties = [
     address: "215 E 18TH St",
     lat: 39.0902,
     lon: -94.5763,
-    link: "https://ahprd1cdn.csgpimgs.com/d2/x2X8hVTTQgMVaCJaF-Oik38hT28CH36eNXT7lK_TshA/document.pdf",
+    link: "https://ahprd1cdn.csgpimgs.com/d2/uIttazioadeJff5NDLYUrIimNP5Y-Qpu5rqXG9oYJjw/document.pdf",
     space: 12008,
     submarket: "Freight House District"
   },
@@ -140,7 +140,7 @@ const properties = [
     lat: 39.1038,
     lon: -94.5861,
     link: "https://ahprd1cdn.csgpimgs.com/d2/yvtS0xlle4-zKw0wt9nuXAtfzTuLN_p6a0sJyKlHYnM/document.pdf",
-    space: 49210,
+    space: 7035,
     submarket: "CBD"
   },
   {
@@ -156,7 +156,7 @@ const properties = [
     lat: 39.0774,
     lon: -94.5947,
     link: "https://ahprd1cdn.csgpimgs.com/d2/ZB1VffK83pEieoWG5nV_hSV3wzjg1YkccUK8r6Iy_XA/Marketing%20Brochure%5CFlyer%20-%202517%20Jefferson%20St.pdf",
-    space: 16697,
+    space: 8533,
     submarket: "Midtown"
   },
   {
@@ -219,7 +219,7 @@ const properties = [
     address: "1210 W 8th St",
     lat: 39.1047,
     lon: -94.6023,
-    link: "https://ahprd1cdn.csgpimgs.com/d2/iEXmGGYQQejuA8d_vF7QL4Xa16glK3R4M9GZvGGSQ3E/Office_112-W-18th-St-Email%20-%20112-114%20W%2018th%20St.pdf",
+    link: null,
     space: 10096,
     submarket: "West Bottoms"
   },
