@@ -1,4 +1,4 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1dmEya2w4MHMybGtpNjkifQ.aoXUpnQ0onOhWlwuCWmdEA';
+mmapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1dmEya2w4MHMybGtpNjkifQ.aoXUpnQ0onOhWlwuCWmdEA';
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -36,13 +36,6 @@ map.on('load', () => {
       'fill-extrusion-opacity': 0.9
     }
   });
-
-  // Red test marker
-  new mapboxgl.Marker({ color: 'red' })
-    .setLngLat([-94.58257, 39.10178])
-    .setPopup(new mapboxgl.Popup().setText("Test Marker"))
-    .addTo(map);
-
   properties.forEach(prop => {
     const popupHTML = `
       <div class="property-popup">
