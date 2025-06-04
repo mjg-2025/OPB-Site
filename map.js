@@ -88,16 +88,18 @@ map.on('load', () => {
   source: "property-labels",
   layout: {
     "text-field": ["get", "address"],
-    "text-size": 12,
+    "text-size": 14, // ⬆️ increased from 12 → 14
     "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
     "text-offset": [0, 1.5],
     "text-anchor": "top",
     "text-allow-overlap": true
   },
   paint: {
-    "text-color": "#333333", // 🧠 Dark neutral for visibility
-    "text-halo-color": "#ffffff",
-    "text-halo-width": 1.2
+    "text-color": "#111111",             // darker gray for contrast
+    "text-halo-color": "#ffffff",        // white outline
+    "text-halo-width": 2.2,              // ⬆️ from 1 → 2.2 for bolder halo
+    "text-halo-blur": 0.2                // subtle blur for smooth edges
   }
 });
 });
+
