@@ -1,7 +1,7 @@
-// 🧠 Mapbox Access Token
+// 🔐 Mapbox Access Token
 mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1dmEya2w4MHMybGtpNjkifQ.aoXUpnQ0onOhWlwuCWmdEA';
 
-// 🗺️ Init Map (FLAT)
+// 🗺️ Map Init
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm',
@@ -15,7 +15,7 @@ const map = new mapboxgl.Map({
 map.on('load', () => {
   console.log("✅ Map loaded. Properties:", properties?.length);
 
-  // 🧠 Combine GeoJSON for points + labels
+  // 👉 Convert properties to GeoJSON
   const geojson = {
     type: "FeatureCollection",
     features: properties.map(p => ({
@@ -36,13 +36,13 @@ map.on('load', () => {
     data: geojson
   });
 
-  // 📍 SYMBOL LAYER with icon + text
+  // 📍 Symbol Layer
   map.addLayer({
     id: "property-markers-layer",
     type: "symbol",
     source: "property-points",
     layout: {
-      "icon-image": "marker", // built-in style icon (can change to your own!)
+      "icon-image": "marker", // ← uses default icon
       "icon-size": 1.2,
       "icon-anchor": "bottom",
       "text-field": ["get", "address"],
@@ -59,11 +59,12 @@ map.on('load', () => {
       "text-color": "#111111",
       "text-halo-color": "#ffffff",
       "text-halo-width": 2.2,
-      "text-halo-blur": 0.3
+      "text-halo-blur": 0.3,
+      "icon-color": "#F7941D" // 🔶 RANGE ORANGE
     }
   });
 
-  // 🧠 Optional: hover popup
+  // 🧠 Popup on hover
   map.on('mouseenter', 'property-markers-layer', (e) => {
     map.getCanvas().style.cursor = 'pointer';
 
@@ -77,9 +78,8 @@ map.on('load', () => {
       </div>
     `;
 
-    const coordinates = e.features[0].geometry.coordinates.slice();
     new mapboxgl.Popup()
-      .setLngLat(coordinates)
+      .setLngLat(e.features[0].geometry.coordinates.slice())
       .setHTML(html)
       .addTo(map);
   });
@@ -87,5 +87,22 @@ map.on('load', () => {
   map.on('mouseleave', 'property-markers-layer', () => {
     map.getCanvas().style.cursor = '';
     map.getPopup()?.remove();
+  });
+
+  // 🎚️ Live Size Filter
+  const slider = document.getElementById("sizeSlider");
+  const sizeValue = document.getElementById("sizeValue");
+
+  map.setFilter("property-markers-layer", [">=", ["to-number", ["get", "space"]], 0]);
+
+  slider.addEventListener("input", () => {
+    const minSize = parseInt(slider.value, 10);
+    sizeValue.textContent = minSize.toLocaleString();
+    map.setFilter("property-markers-layer", [">=", ["to-number", ["get", "space"]], minSize]);
+  });
+
+  // ☰ Sidebar Toggle
+  document.getElementById('toggleSidebar').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
   });
 });
