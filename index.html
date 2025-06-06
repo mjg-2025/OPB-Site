@@ -6,31 +6,84 @@
   <title>OPB Site Selection</title>
   <meta name="description" content="Interactive 3D property map for Range Realty Partners." />
 
-  <!-- ✅ Mapbox CSS -->
+  <!-- Mapbox CSS -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 
-  <!-- ✅ Basic CSS to ensure map displays correctly -->
+  <!-- UI Styling -->
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      font-family: 'Segoe UI', sans-serif;
     }
     #map {
       width: 100%;
       height: 100%;
     }
+
+    /* Sidebar Style */
+    #sidebar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      background: white;
+      padding: 20px;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 10;
+    }
+    #sidebar.open {
+      transform: translateX(0);
+    }
+
+    #toggleSidebar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 11;
+      background: #F7941D; /* 🔶 Range Orange */
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    label, input {
+      display: block;
+      margin: 10px 0;
+    }
+
+    #sizeValue {
+      font-weight: bold;
+      margin-left: 5px;
+    }
   </style>
 </head>
 <body>
-  <!-- ✅ Only ONE #map container -->
+
+  <!-- ☰ Sidebar Toggle -->
+  <button id="toggleSidebar">☰ Filters</button>
+
+  <!-- 📊 Sidebar UI -->
+  <div id="sidebar">
+    <h2>Filter Properties</h2>
+    <label for="sizeSlider">Minimum Size (SF): <span id="sizeValue">0</span></label>
+    <input type="range" id="sizeSlider" min="0" max="12500" step="500" value="0" />
+  </div>
+
+  <!-- 🗺️ Map Container -->
   <div id="map"></div>
 
-  <!-- ✅ Mapbox JS -->
+  <!-- Scripts -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-
-  <!-- ✅ Your Scripts -->
   <script src="data.js" defer></script>
-    <script src="map.js" defer></script> <!-- ✅ map.js must exist -->
+  <script src="map.js" defer></script>
+
 </body>
 </html>
