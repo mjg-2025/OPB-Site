@@ -87,7 +87,7 @@ map.on('load', () => {
     const coords = e.features[0].geometry.coordinates;
     const cleanFolder = p.address.replaceAll(' ', '-').replaceAll('.', '').replaceAll(',', '');
 
-    fetch(`/images/${cleanFolder}.json`)
+    fetch(`/images/${cleanFolder}`)
       .then(res => res.json())
       .then(images => {
         let currentIndex = 0;
@@ -95,7 +95,7 @@ map.on('load', () => {
         const buildPopupHTML = () => {
           const imgHTML = images.length
             ? `<div style="position:relative">
-                 <img src="/images/${cleanFolder}/${images[currentIndex]}" style="width:100%; max-height:180px; object-fit:contain;" />
+                 <img src="${images[currentIndex]}" style="width:100%; max-height:180px; object-fit:contain;" />
                  <div style="position:absolute;top:50%;left:0;transform:translateY(-50%);">
                    ${currentIndex > 0 ? `<button id="prevBtn">⬅️</button>` : ''}
                  </div>
