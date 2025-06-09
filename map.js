@@ -11,8 +11,6 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', () => {
-  console.log("✅ Map loaded. Total properties:", properties?.length);
-
   const geojson = {
     type: "FeatureCollection",
     features: properties.map((p, index) => ({
@@ -84,37 +82,75 @@ map.on('load', () => {
 
   updateVisibility();
 
-  // 🧠 Smart popups with auto image fetch
-  map.on('mouseenter', 'property-markers-layer', (e) => {
-    map.getCanvas().style.cursor = 'pointer';
+  map.on('click', 'property-markers-layer', (e) => {
     const p = e.features[0].properties;
     const coords = e.features[0].geometry.coordinates;
+    const cleanFolder = p.address.replaceAll(' ', '-').replaceAll('.', '').replaceAll(',', '');
 
-    fetch(`/images/${p.address.replaceAll(' ', '-').replaceAll('.', '').replaceAll(',', '')}`)
+    fetch(`/images/${cleanFolder}`)
       .then(res => res.json())
       .then(images => {
-        const imgHTML = images.length
-          ? `<img src="/uploads/${images[0]}" style="width:100%;margin-top:10px;">`
-          : `<em>No image available</em>`;
+        let currentIndex = 0;
 
-        const html = `
-          <h3>${p.address}</h3>
-          <p><strong>Submarket:</strong> ${p.submarket}</p>
-          <p><strong>Size:</strong> ${Number(p.space).toLocaleString()} SF</p>
-          ${p.link ? `<a href="${p.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
-          ${imgHTML}
-        `;
+        const buildPopupHTML = () => {
+          const imgHTML = images.length
+            ? `<div style="position:relative">
+                 <img src="/uploads/${images[currentIndex]}" style="width:100%; max-height:180px; object-fit:contain;" />
+                 <div style="position:absolute;top:50%;left:0;transform:translateY(-50%);">
+                   ${currentIndex > 0 ? `<button id="prevBtn">⬅️</button>` : ''}
+                 </div>
+                 <div style="position:absolute;top:50%;right:0;transform:translateY(-50%);">
+                   ${currentIndex < images.length - 1 ? `<button id="nextBtn">➡️</button>` : ''}
+                 </div>
+               </div>`
+            : `<em>No images</em>`;
 
-        new mapboxgl.Popup()
+          return `
+            <h3>${p.address}</h3>
+            <p><strong>Submarket:</strong> ${p.submarket}</p>
+            <p><strong>Size:</strong> ${Number(p.space).toLocaleString()} SF</p>
+            ${p.link ? `<a href="${p.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
+            ${imgHTML}
+          `;
+        };
+
+        const popup = new mapboxgl.Popup()
           .setLngLat(coords)
-          .setHTML(html)
+          .setHTML(buildPopupHTML())
           .addTo(map);
+
+        map.once('render', () => {
+          setTimeout(() => attachGalleryListeners(), 10);
+        });
+
+        function attachGalleryListeners() {
+          const nextBtn = document.getElementById("nextBtn");
+          const prevBtn = document.getElementById("prevBtn");
+
+          if (nextBtn) {
+            nextBtn.addEventListener("click", () => {
+              currentIndex = (currentIndex + 1) % images.length;
+              popup.setHTML(buildPopupHTML());
+              setTimeout(() => attachGalleryListeners(), 10);
+            });
+          }
+
+          if (prevBtn) {
+            prevBtn.addEventListener("click", () => {
+              currentIndex = (currentIndex - 1 + images.length) % images.length;
+              popup.setHTML(buildPopupHTML());
+              setTimeout(() => attachGalleryListeners(), 10);
+            });
+          }
+        }
       });
   });
 
+  map.on('mouseenter', 'property-markers-layer', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
   map.on('mouseleave', 'property-markers-layer', () => {
     map.getCanvas().style.cursor = '';
-    map.getPopup()?.remove();
   });
 
   document.getElementById("toggleSidebar").addEventListener("click", () => {
