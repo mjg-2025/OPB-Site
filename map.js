@@ -87,7 +87,7 @@ map.on('load', () => {
     const coords = e.features[0].geometry.coordinates;
     const cleanFolder = p.address.replaceAll(' ', '-').replaceAll('.', '').replaceAll(',', '');
 
-    fetch(`/images/${cleanFolder}`)
+    fetch(`/images/${cleanFolder}.json`)
       .then(res => res.json())
       .then(images => {
         let currentIndex = 0;
@@ -95,7 +95,7 @@ map.on('load', () => {
         const buildPopupHTML = () => {
           const imgHTML = images.length
             ? `<div style="position:relative">
-                 <img src="/uploads/${images[currentIndex]}" style="width:100%; max-height:180px; object-fit:contain;" />
+                 <img src="/images/${cleanFolder}/${images[currentIndex]}" style="width:100%; max-height:180px; object-fit:contain;" />
                  <div style="position:absolute;top:50%;left:0;transform:translateY(-50%);">
                    ${currentIndex > 0 ? `<button id="prevBtn">⬅️</button>` : ''}
                  </div>
@@ -143,6 +143,19 @@ map.on('load', () => {
             });
           }
         }
+      })
+      .catch(err => {
+        console.error('Failed to load images:', err);
+        new mapboxgl.Popup()
+          .setLngLat(coords)
+          .setHTML(`
+            <h3>${p.address}</h3>
+            <p><strong>Submarket:</strong> ${p.submarket}</p>
+            <p><strong>Size:</strong> ${Number(p.space).toLocaleString()} SF</p>
+            ${p.link ? `<a href="${p.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
+            <em>⚠️ No image gallery found.</em>
+          `)
+          .addTo(map);
       });
   });
 
