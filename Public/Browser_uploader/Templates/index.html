@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Uploader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    .upload-box {
+      border: 2px dashed #aaa;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    #output {
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload Images</h1>
+
+  <label for="folder">Select Folder:</label>
+  <select id="folder">
+    {% for f in folders %}
+      <option value="{{ f }}">{{ f }}</option>
+    {% endfor %}
+  </select>
+
+  <div class="upload-box" id="upload-box">
+    Click or drop files here
+    <input type="file" id="file-input" multiple style="display:none;">
+  </div>
+
+  <button id="upload-btn">Upload</button>
+
+  <div id="output"></div>
+
+  <script>
+    const uploadBox = document.getElementById('upload-box');
+    const fileInput = document.getElementById('file-input');
+    const uploadBtn = document.getElementById('upload-btn');
+    const output = document.getElementById('output');
+
+    let filesToUpload = [];
+
+    uploadBox.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      filesToUpload = [...e.target.files];
+      uploadBox.textContent = `${filesToUpload.length} file(s) selected. Click 'Upload'.`;
+    });
+
+    uploadBox.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadBox.style.borderColor = '#333';
+    });
+
+    uploadBox.addEventListener('dragleave', () => {
+      uploadBox.style.borderColor = '#aaa';
+    });
+
+    uploadBox.addEventListener('drop', e => {
+      e.preventDefault();
+      filesToUpload = [...e.dataTransfer.files];
+      uploadBox.textContent = `${filesToUpload.length} file(s) dropped. Click 'Upload'.`;
+    });
+
+    uploadBtn.addEventListener('click', () => {
+      const folder = document.getElementById('folder').value;
+      if (!folder || filesToUpload.length === 0) {
+        output.textContent = "Select a folder and add files.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('folder', folder);
+      filesToUpload.forEach(file => formData.append('files[]', file));
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        output.textContent = `Uploaded: ${data.files.join(', ')}`;
+        filesToUpload = [];
+        uploadBox.textContent = "Click or drop files here";
+      })
+      .catch(err => {
+        console.error(err);
+        output.textContent = "Upload failed.";
+      });
+    });
+  </script>
+</body>
+</html>
