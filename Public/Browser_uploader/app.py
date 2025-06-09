@@ -47,7 +47,7 @@ def list_images(folder):
     images = [
         url_for('serve_image', filename=f"{folder}/{f.name}")
         for f in folder_path.iterdir()
-        if f.suffix.lower() in ['.jpg', '.jpeg', '.png']
+        if f.suffix.lower() in ['.jpg', '.jpeg', '.png', 'avif']
     ]
     return jsonify(images)
 
