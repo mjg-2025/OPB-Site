@@ -1,7 +1,5 @@
-// 🧠 Mapbox Access Token
 mapboxgl.accessToken = 'pk.eyJ1IjoibWVsaXNzYWdhbGwyMDIzIiwiYSI6ImNsbWpzZmRkdTA1dmEya2w4MHMybGtpNjkifQ.aoXUpnQ0onOhWlwuCWmdEA';
 
-// 🗺️ Init Map
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/melissagall2023/cmbibep5u00hf01s16biahnvm',
@@ -20,7 +18,10 @@ map.on('load', () => {
     features: properties.map((p, index) => ({
       type: "Feature",
       id: index,
-      geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+      geometry: {
+        type: "Point",
+        coordinates: [p.lon, p.lat]
+      },
       properties: {
         ...p,
         id: index
@@ -28,13 +29,11 @@ map.on('load', () => {
     }))
   };
 
-  // 🔌 Add data source
   map.addSource("property-points", {
     type: "geojson",
     data: geojson
   });
 
-  // 📍 Symbol Layer
   map.addLayer({
     id: "property-markers-layer",
     type: "symbol",
@@ -57,11 +56,9 @@ map.on('load', () => {
     }
   });
 
-  // 🔁 Checkbox logic
   const checkboxList = document.getElementById("checkboxList");
-  const selectedIDs = new Set(properties.map((_, i) => i)); // default all visible
+  const selectedIDs = new Set(properties.map((_, i) => i));
 
-  // Render checkboxes
   properties.forEach((p, i) => {
     const row = document.createElement('div');
     row.className = 'property-checkbox';
@@ -74,7 +71,6 @@ map.on('load', () => {
     checkboxList.appendChild(row);
   });
 
-  // Update visibility
   function updateVisibility() {
     const filter = ["in", "$id", ...Array.from(selectedIDs)];
     map.setFilter("property-markers-layer", filter);
@@ -82,30 +78,38 @@ map.on('load', () => {
 
   checkboxList.addEventListener("change", (e) => {
     const id = parseInt(e.target.getAttribute("data-id"));
-    if (e.target.checked) {
-      selectedIDs.add(id);
-    } else {
-      selectedIDs.delete(id);
-    }
+    e.target.checked ? selectedIDs.add(id) : selectedIDs.delete(id);
     updateVisibility();
   });
 
-  updateVisibility(); // Init
+  updateVisibility();
 
-  // 🧠 Popups
+  // 🧠 Smart popups with auto image fetch
   map.on('mouseenter', 'property-markers-layer', (e) => {
     map.getCanvas().style.cursor = 'pointer';
     const p = e.features[0].properties;
-    const html = `
-      <h3>${p.address}</h3>
-      <p><strong>Submarket:</strong> ${p.submarket}</p>
-      <p><strong>Size:</strong> ${Number(p.space).toLocaleString()} SF</p>
-      ${p.link ? `<a href="${p.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
-    `;
-    new mapboxgl.Popup()
-      .setLngLat(e.features[0].geometry.coordinates)
-      .setHTML(html)
-      .addTo(map);
+    const coords = e.features[0].geometry.coordinates;
+
+    fetch(`/images/${p.address.replaceAll(' ', '-').replaceAll('.', '').replaceAll(',', '')}`)
+      .then(res => res.json())
+      .then(images => {
+        const imgHTML = images.length
+          ? `<img src="/uploads/${images[0]}" style="width:100%;margin-top:10px;">`
+          : `<em>No image available</em>`;
+
+        const html = `
+          <h3>${p.address}</h3>
+          <p><strong>Submarket:</strong> ${p.submarket}</p>
+          <p><strong>Size:</strong> ${Number(p.space).toLocaleString()} SF</p>
+          ${p.link ? `<a href="${p.link}" target="_blank">📎 Brochure</a>` : `<em>No brochure</em>`}
+          ${imgHTML}
+        `;
+
+        new mapboxgl.Popup()
+          .setLngLat(coords)
+          .setHTML(html)
+          .addTo(map);
+      });
   });
 
   map.on('mouseleave', 'property-markers-layer', () => {
@@ -113,7 +117,6 @@ map.on('load', () => {
     map.getPopup()?.remove();
   });
 
-  // ☰ Sidebar toggle
   document.getElementById("toggleSidebar").addEventListener("click", () => {
     document.getElementById("sidebar").classList.toggle("open");
   });
